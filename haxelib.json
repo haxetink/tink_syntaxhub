@@ -1,15 +1,24 @@
 {
 	"name": "tink_syntaxhub",
-	"url" : "http://haxetink.org/tink_syntaxhub",
 	"license": "MIT",
-	"tags": ["tink", "cross", "utility", "macro", "syntax", "sugar"],
+	"tags": [
+		"tink",
+		"cross",
+		"utility",
+		"macro",
+		"syntax",
+		"sugar"
+	],
+	"classPath": "src",
 	"description": "Hub for plugging in language extensions.",
+	"contributors": [
+		"back2dos"
+	],
+	"releasenote": "First version.",
 	"version": "0.1.0",
-	"releasenote": "Inital release.",
-	"contributors": ["back2dos"],
+	"url": "http://haxetink.org/tink_syntaxhub",
 	"dependencies": {
-		"tink_macro": "",
-		"tink_priority": ""
-	},
-	"classPath": "src" 
+		"tink_priority": "",
+		"tink_macro": ""
+	}
 }
