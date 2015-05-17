@@ -14,8 +14,8 @@
 	"contributors": [
 		"back2dos"
 	],
-	"releasenote": "Reworked expression level syntax.",
-	"version": "0.2.0",
+	"releasenote": "Added extraParams",
+	"version": "0.2.1",
 	"url": "http://haxetink.org/tink_syntaxhub",
 	"dependencies": {
 		"tink_priority": "",
