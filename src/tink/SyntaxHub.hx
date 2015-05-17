@@ -7,14 +7,10 @@ import tink.macro.ClassBuilder;
 
 import tink.priority.Queue;
 import tink.syntaxhub.FrontendContext;
+import tink.syntaxhub.ExprLevelSyntax;
 
 using tink.CoreApi;
 using haxe.macro.Tools;
-
-typedef ExprLevelSyntax = {
-	function appliesTo(c:ClassBuilder):Bool;
-	function apply(e:Expr):Expr;
-}
 
 class SyntaxHub {
 	
@@ -51,7 +47,7 @@ class SyntaxHub {
 			}
 	
 	static public var classLevel(default, null) = new Queue<Callback<ClassBuilder>>();
-	static public var exprLevel(default, null) = new Queue<ExprLevelSyntax>();	
+	static public var exprLevel(default, null) = new ExprLevelSyntax('tink.SyntaxHub::exprLevel');
 	static public var transformMain(default, null) = new Queue<Expr->Expr>();	
 	
 	static public var frontends(get, never):Queue<FrontendPlugin>;
@@ -59,35 +55,16 @@ class SyntaxHub {
 		static inline function get_frontends()
 			return FrontendContext.plugins;
 	
-	//TODO: at some point exposing the latter two might be a good idea
-	static function simpleSugar(rule:ClassBuilder->(Expr->Expr), ?outsideIn = false) {
-		return makeSyntax(function (ctx) {
-			var rule = rule(ctx);
-			 
-			function transform(e:Expr) {
-				return
-					if (e == null || e.expr == null) e;
-					else 
-						switch e.expr {
-							case EMeta( { name: ':diet' }, _): e;
-							default: 
-								if (outsideIn) 
-									rule(e).map(transform);
-								else 
-									rule(e.map(transform));
-						}
-			}
-			return transform;
-		});
-	}
-	
-	static function makeSyntax(rule:ClassBuilder->(Expr->Expr)):Callback<ClassBuilder>
+	static public function makeSyntax(rule:ClassBuilder->(Expr->Expr)):Callback<ClassBuilder>
 		return function (ctx:ClassBuilder) {
 			var rule = rule(ctx);
 			function transform(f:Function)
 				if (f.expr != null)
 					f.expr = rule(f.expr);
-			ctx.getConstructor().onGenerate(transform);
+					
+			if (ctx.hasConstructor())
+				ctx.getConstructor().onGenerate(transform);
+				
 			for (m in ctx)
 				switch m.kind {
 					case FFun(f): transform(f);
@@ -110,14 +87,7 @@ class SyntaxHub {
 		}
 	
 	static var INITIALIZED = {
-		classLevel.whenever(simpleSugar(function (c) {
-			var relevant = [for (p in exprLevel.getData()) if (p.appliesTo(c)) p];
-			return function (e) {
-				for (p in relevant) 
-					e = p.apply(e);
-				return e;
-			}
-		}));
+		classLevel.whenever(makeSyntax(exprLevel.appliedTo), exprLevel.id);
 		true;
 	}
 }
