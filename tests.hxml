@@ -1,10 +1,8 @@
 -lib tink_core
 -lib tink_priority
+-lib tink_macro
 -cp src
 -cp tests
--cp ../tink_macro/src
--js bin/tinksyntaxhub.js
--D analyzer
 -main Main
 extraParams.hxml
 -dce full

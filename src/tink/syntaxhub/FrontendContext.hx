@@ -10,11 +10,6 @@ import tink.priority.Queue;
 using sys.FileSystem;
 using tink.MacroApi;
 
-interface FrontendPlugin {
-	var extension(default, null):String;
-	function parse(file:String, context:FrontendContext):Bool;
-}
-
 enum IncludeKind {
 	KImport(i:ImportExpr);
 	KUsing(u:TypePath);
@@ -37,12 +32,23 @@ class FrontendContext {
 		this.pack = pack;
 	}
 	
-	public function getType(name:String, orCreate:Lazy<TypeDefinition>) {
+	public function getType(?name:String, ?orCreate:Lazy<TypeDefinition>) {
+		if (name == null)
+			name = this.name;
+			
 		for (t in types) {
 			if (t.name == name) return t;
 		}
-		var ret = orCreate.get();
+		
+		var ret = 
+			if (orCreate != null) orCreate.get();
+			else macro class { };
+			
+		ret.name = name;
+		ret.pack = this.pack;
+		
 		types.push(ret);
+		
 		return ret;
 	}
 	
@@ -75,13 +81,14 @@ class FrontendContext {
 				
 		for (cp in Context.getClassPath()) {
 			var fileName = '$cp/${pack.join("/")}/$name';
-			for (p in plugins) {
-				var candidate = '$fileName.${p.extension}';
-				if (candidate.exists()) {
-					ret.addDependency(candidate);
-					p.parse(candidate, ret);
+			for (p in plugins) 
+				for (ext in p.extensions()) {
+					var candidate = '$fileName.$ext';
+					if (candidate.exists()) {
+						ret.addDependency(candidate);
+						p.parse(candidate, ret);
+					}
 				}
-			}
 		}
 		
 		return ret;
@@ -134,7 +141,7 @@ class FrontendContext {
 					name: name, 
 					pos: Context.currentPos(),
 					fields: [],
-					kind: TDAlias(actual.asComplexType()),
+					kind: TDAlias(actual.asComplexType())
 				}
 			case None: 
 				null;

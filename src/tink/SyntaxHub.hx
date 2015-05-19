@@ -7,8 +7,7 @@ import haxe.ds.Option;
 import tink.macro.ClassBuilder;
 
 import tink.priority.Queue;
-import tink.syntaxhub.FrontendContext;
-import tink.syntaxhub.ExprLevelSyntax;
+import tink.syntaxhub.*;
 
 using tink.CoreApi;
 using haxe.macro.Tools;
