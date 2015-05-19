@@ -14,8 +14,8 @@
 	"contributors": [
 		"back2dos"
 	],
-	"releasenote": "Added extraParams",
-	"version": "0.2.1",
+	"releasenote": "Added tests and documentation.",
+	"version": "0.3.0",
 	"url": "http://haxetink.org/tink_syntaxhub",
 	"dependencies": {
 		"tink_priority": "",
