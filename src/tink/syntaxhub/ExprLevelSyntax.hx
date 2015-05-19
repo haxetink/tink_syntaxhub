@@ -1,5 +1,6 @@
 package tink.syntaxhub;
 
+import haxe.ds.Option;
 import haxe.macro.Expr;
 import tink.macro.ClassBuilder;
 import tink.priority.ID;
@@ -19,7 +20,7 @@ class ExprLevelSyntax {
 		this.id = id;
 	}
 	
-	public function appliedTo(c:ClassBuilder):Expr->Expr {
+	public function appliedTo(c:ClassBuilder):Option<Expr->Expr> {
 		function getRelevant(q:Queue<ExprLevelRule>)
 			return [for (p in q.getData()) if (p.appliesTo(c)) p];
 			
@@ -27,7 +28,7 @@ class ExprLevelSyntax {
 				outward = getRelevant(outward);
 				
 		if (inward.length + outward.length == 0)
-			return function (e) return e;
+			return None;
 			
 		function apply(e:Expr) 
 			return 
@@ -47,7 +48,7 @@ class ExprLevelSyntax {
 							e;
 					}		
 					
-		return apply;		
+		return Some(apply);		
 	}
 }
 

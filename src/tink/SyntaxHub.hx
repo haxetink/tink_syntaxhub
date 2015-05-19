@@ -2,6 +2,7 @@ package tink;
 
 import haxe.macro.*;
 import haxe.macro.Expr;
+import haxe.ds.Option;
 
 import tink.macro.ClassBuilder;
 
@@ -37,16 +38,21 @@ class SyntaxHub {
 				
 					var builder = new ClassBuilder();
 					
+					var changed = false;
+					
 					for (plugin in classLevel.getData())
-						plugin.invoke(builder);
+						changed = changed || plugin(builder);
 						
-					applyMainTransform(builder);
-						
-					return builder.export(builder.target.meta.has(':explain'));
+					changed = changed || applyMainTransform(builder);
+					
+					if (changed) 
+						builder.export(builder.target.meta.has(':explain'));
+					else
+						null;
 				default: null;
 			}
 	
-	static public var classLevel(default, null) = new Queue<Callback<ClassBuilder>>();
+	static public var classLevel(default, null) = new Queue<ClassBuilder->Bool>();
 	static public var exprLevel(default, null) = new ExprLevelSyntax('tink.SyntaxHub::exprLevel');
 	static public var transformMain(default, null) = new Queue<Expr->Expr>();	
 	
@@ -55,36 +61,46 @@ class SyntaxHub {
 		static inline function get_frontends()
 			return FrontendContext.plugins;
 	
-	static public function makeSyntax(rule:ClassBuilder->(Expr->Expr)):Callback<ClassBuilder>
-		return function (ctx:ClassBuilder) {
-			var rule = rule(ctx);
-			function transform(f:Function)
-				if (f.expr != null)
-					f.expr = rule(f.expr);
+	static public function makeSyntax(rule:ClassBuilder->Option<Expr->Expr>):ClassBuilder->Bool
+		return function (ctx:ClassBuilder) 
+			return switch rule(ctx) {
+				case Some(rule):
 					
-			if (ctx.hasConstructor())
-				ctx.getConstructor().onGenerate(transform);
-				
-			for (m in ctx)
-				switch m.kind {
-					case FFun(f): transform(f);
-					case FProp(_, _, _, e), FVar(_, e): 
-						if (e != null)
-							e.expr = rule(e).expr;//TODO: it might be better to just create a new kind, rather than modifying the expression in place
-				}
-		}	
+					function transform(f:Function)
+						if (f.expr != null)
+							f.expr = rule(f.expr);
+							
+					if (ctx.hasConstructor())
+						ctx.getConstructor().onGenerate(transform);
+						
+					for (m in ctx)
+						switch m.kind {
+							case FFun(f): transform(f);
+							case FProp(_, _, _, e), FVar(_, e): 
+								if (e != null)
+									e.expr = rule(e).expr;//TODO: it might be better to just create a new kind, rather than modifying the expression in place
+						}
+						
+					true;
+				case None: 
+					false;
+			}
 	
 	static function applyMainTransform(c:ClassBuilder)
-		if (c.target.pack.concat([c.target.name]).join('.') == MAIN) {
-			var main = c.memberByName('main').sure();
-			var f = main.getFunction().sure();
-			
-			if (f.expr == null)
-				f.expr = macro @:pos(main.pos) { };
+		return
+			if (c.target.pack.concat([c.target.name]).join('.') == MAIN) {
+				var main = c.memberByName('main').sure();
+				var f = main.getFunction().sure();
 				
-			for (rule in transformMain)
-				f.expr = rule(f.expr);
-		}
+				if (f.expr == null)
+					f.expr = macro @:pos(main.pos) { };
+					
+				for (rule in transformMain)
+					f.expr = rule(f.expr);
+				
+				true;
+			}
+			else false;
 	
 	static var INITIALIZED = {
 		classLevel.whenever(makeSyntax(exprLevel.appliedTo), exprLevel.id);
