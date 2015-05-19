@@ -40,9 +40,9 @@ class SyntaxHub {
 					var changed = false;
 					
 					for (plugin in classLevel.getData())
-						changed = changed || plugin(builder);
+						changed = plugin(builder) || changed;
 						
-					changed = changed || applyMainTransform(builder);
+					changed = applyMainTransform(builder) || changed;
 					
 					if (changed) 
 						builder.export(builder.target.meta.has(':explain'));
