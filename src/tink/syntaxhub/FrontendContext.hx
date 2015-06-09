@@ -95,7 +95,7 @@ class FrontendContext {
 	}
 	
 	static function moduleForType(name:String) {
-		if (name.indexOf('__impl') != -1 || plugins.getData().length == 0
+		if (name.indexOf('__impl') != -1 || plugins.getData().length == 0) return None;
 		var pack = name.split('.');
 		var name = pack.pop();
 		var actual = pack.concat(['__impl', name]).join('.');
