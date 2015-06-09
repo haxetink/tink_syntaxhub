@@ -14,8 +14,8 @@
 	"contributors": [
 		"back2dos"
 	],
-	"releasenote": "Reduce compile time footprint.",
-	"version": "0.3.1",
+	"releasenote": "Small fix.",
+	"version": "0.3.2",
 	"url": "http://haxetink.org/tink_syntaxhub",
 	"dependencies": {
 		"tink_priority": "",
