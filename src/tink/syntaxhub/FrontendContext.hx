@@ -76,21 +76,26 @@ class FrontendContext {
 	static public var plugins(default, null) = new Queue<FrontendPlugin>();
 	
 	static function buildModule(pack:Array<String>, name:String) {
-		var ret = new FrontendContext(name, pack),
-				plugins = plugins.getData();
-				
+		var ret = new FrontendContext(name, pack);
+		
+		for (result in seekFile(pack, name, plugins.getData())) {
+			ret.addDependency(result.file);
+			result.plugin.parse(result.file, ret);
+		}
+		
+		return ret;
+	}
+	static public function seekFile<T:FrontendPlugin>(pack:Array<String>, name:String, plugins:Iterable<T>) {
+		var ret = [];
 		for (cp in Context.getClassPath()) {
 			var fileName = '$cp/${pack.join("/")}/$name';
 			for (p in plugins) 
 				for (ext in p.extensions()) {
 					var candidate = '$fileName.$ext';
-					if (candidate.exists()) {
-						ret.addDependency(candidate);
-						p.parse(candidate, ret);
-					}
+					if (candidate.exists()) 
+						ret.push({ file: candidate, plugin: p });
 				}
 		}
-		
 		return ret;
 	}
 	
