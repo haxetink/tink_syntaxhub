@@ -14,8 +14,8 @@
 	"contributors": [
 		"back2dos"
 	],
-	"releasenote": "Small fix.",
-	"version": "0.3.2",
+	"releasenote": "Expose file seeking.",
+	"version": "0.3.3",
 	"url": "http://haxetink.org/tink_syntaxhub",
 	"dependencies": {
 		"tink_priority": "",
