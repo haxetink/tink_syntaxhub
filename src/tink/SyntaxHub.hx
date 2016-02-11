@@ -15,7 +15,6 @@ using haxe.macro.Tools;
 class SyntaxHub {
 	
 	static var MAIN:Null<String> = null;
-	
 	static function use() {
 		var args = Sys.args();
 		
@@ -24,7 +23,7 @@ class SyntaxHub {
 				case -1: null;
 				case v: args[v + 1];
 			}
-			
+		FrontendContext.resetCache();
 		Context.onTypeNotFound(FrontendContext.findType);
 		Compiler.addGlobalMetadata('', '@:build(tink.SyntaxHub.build())', true, true, false);
 	}

@@ -134,22 +134,32 @@ class FrontendContext {
 		}	
 		return Some(actual);
 	}
-		
+  
+	static var cache;
+	static public function resetCache()
+    cache = new Map();
+    
 	@:noDoc
 	static public function findType(name:String):TypeDefinition 
-		return switch moduleForType(name) {
-			case Some(actual):
-				var pack = name.split('.');
-				var name = pack.pop();
-				return {
-					pack: pack,
-					name: name, 
-					pos: Context.currentPos(),
-					fields: [],
-					kind: TDAlias(actual.asComplexType())
-				}
-			case None: 
-				null;
-		}
+		return 
+      switch cache[name] {
+        case null:
+          cache[name] =           
+            switch moduleForType(name) {
+              case Some(actual):
+                var pack = name.split('.');
+                var name = pack.pop();
+                {
+                  pack: pack,
+                  name: name, 
+                  pos: Context.currentPos(),
+                  fields: [],
+                  kind: TDAlias(actual.asComplexType())
+                }
+              case None: 
+                null;
+            }
+        case v: v; 
+      }
 		
 }

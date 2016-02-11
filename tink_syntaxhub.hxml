@@ -1,8 +1,5 @@
--lib tink_core
--lib tink_priority
--cp src
+-lib tink_syntaxhub
 -cp tests
--cp ../tink_macro/src
 -js bin/tinksyntaxhub.js
 -D analyzer
 -main Main
