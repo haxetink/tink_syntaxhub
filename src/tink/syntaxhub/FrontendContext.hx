@@ -142,24 +142,23 @@ class FrontendContext {
 	@:noDoc
 	static public function findType(name:String):TypeDefinition 
 		return 
-      switch cache[name] {
-        case null:
-          cache[name] =           
-            switch moduleForType(name) {
-              case Some(actual):
-                var pack = name.split('.');
-                var name = pack.pop();
-                {
-                  pack: pack,
-                  name: name, 
-                  pos: Context.currentPos(),
-                  fields: [],
-                  kind: TDAlias(actual.asComplexType())
-                }
-              case None: 
-                null;
-            }
-        case v: v; 
-      }
+      if (cache.exists(name))
+        cache[name];
+      else 
+        cache[name] =           
+          switch moduleForType(name) {
+            case Some(actual):
+              var pack = name.split('.');
+              var name = pack.pop();
+              {
+                pack: pack,
+                name: name, 
+                pos: Context.currentPos(),
+                fields: [],
+                kind: TDAlias(actual.asComplexType())
+              }
+            case None: 
+              null;
+          }
 		
 }
