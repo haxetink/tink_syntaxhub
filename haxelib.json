@@ -14,8 +14,8 @@
 	"contributors": [
 		"back2dos"
 	],
-	"releasenote": "Cache types more aggressively.",
-	"version": "0.3.4",
+	"releasenote": "Improve cache.",
+	"version": "0.3.5",
 	"url": "http://haxetink.org/tink_syntaxhub",
 	"dependencies": {
 		"tink_priority": "",
