@@ -14,8 +14,8 @@
 	"contributors": [
 		"back2dos"
 	],
-	"releasenote": "Expose file seeking.",
-	"version": "0.3.3",
+	"releasenote": "Cache types more aggressively.",
+	"version": "0.3.4",
 	"url": "http://haxetink.org/tink_syntaxhub",
 	"dependencies": {
 		"tink_priority": "",
