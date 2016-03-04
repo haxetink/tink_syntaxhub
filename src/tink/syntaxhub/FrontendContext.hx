@@ -100,11 +100,18 @@ class FrontendContext {
 	}
 	
 	static function moduleForType(name:String) {
-		if (name.indexOf('__impl') != -1 || plugins.getData().length == 0) return None;
+		if (name.indexOf('__impl') != -1 || plugins.getData().length == 0) return;
 		var pack = name.split('.');
-		var name = pack.pop();
-		var actual = pack.concat(['__impl', name]).join('.');
-		var exists = 
+		var tname = pack.pop();
+		var actual = pack.concat(['__impl', tname]).join('.');
+		cache[name] = {
+			pack: pack,
+			name: tname,
+			pos: Context.currentPos(),
+			fields: [],
+			kind: TDAlias(actual.asComplexType())
+		}
+		var exists =
 			try {
 				Context.getModule(actual);
 				true;
@@ -112,9 +119,12 @@ class FrontendContext {
 			catch (e:Dynamic) false;
 		
 		if (!exists) {
-			var module = buildModule(pack, name);
-			if (module.types.length == 0) return None;
-			
+			var module = buildModule(pack, tname);
+			if (module.types.length == 0) {
+				cache.remove(name);
+				return;
+			}
+
 			var imports = [],
 					usings = [];
 					
@@ -131,34 +141,18 @@ class FrontendContext {
 			Context.defineModule(actual, module.types, imports, usings);
 			for (d in module.dependencies)
 				Context.registerModuleDependency(actual, d);
-		}	
-		return Some(actual);
+		}
 	}
-  
-	static var cache;
+
+	static var cache:Map<String,TypeDefinition>;
 	static public function resetCache()
     cache = new Map();
     
 	@:noDoc
-	static public function findType(name:String):TypeDefinition 
-		return 
-      if (cache.exists(name))
-        cache[name];
-      else 
-        cache[name] =           
-          switch moduleForType(name) {
-            case Some(actual):
-              var pack = name.split('.');
-              var name = pack.pop();
-              {
-                pack: pack,
-                name: name, 
-                pos: Context.currentPos(),
-                fields: [],
-                kind: TDAlias(actual.asComplexType())
-              }
-            case None: 
-              null;
-          }
-		
+	static public function findType(name:String):TypeDefinition  {
+		if (!cache.exists(name))
+			moduleForType(name);
+		return cache[name];
+	}
+
 }
