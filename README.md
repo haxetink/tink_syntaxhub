@@ -17,7 +17,7 @@ The syntax hub is organized on `tink_priority` queues, which in allow for plugin
 
 By using `haxe.macro.Context.onTypeNotFound`, you can add additional frontends to the haxe compiler. With `tink_syntaxhub` this should turn out a little less raw. A frontend is expressed like so:
 
-```
+```haxe
 interface FrontendPlugin {
 	function extensions():Iterator<String>;
 	function parse(file:String, context:FrontendContext):Void;
@@ -30,7 +30,7 @@ There's not much to it. Before we go into detail and look at what a FrontendCont
 
 Let's build our own silly frontend! One that takes text files and turns them into classes with one static property.
 
-```
+```haxe
 import tink.syntaxhub.*;
 import haxe.macro.Expr;
 import haxe.macro.Context;
@@ -61,7 +61,7 @@ class TxtFrontend implements FrontendPlugin {
 
 Put a `HelloWorld.txt` in your classpath and compile this with `haxe --macro TxtFrontend.use() -main Main --interp` :
 	
-```
+```haxe
 class Main {
 	static function main()
 		trace(HelloWorld.TEXT);
@@ -70,7 +70,7 @@ class Main {
 
 Et voila! Awesome sauce! So hey, why not do the same for XMLs?
 
-```
+```haxe
 import tink.syntaxhub.*;
 import haxe.macro.Expr;
 import haxe.macro.Context;
@@ -106,7 +106,7 @@ class XmlFrontend implements FrontendPlugin {
 
 Add a `HelloWorld.xml` in your classpath and this time compile with `haxe --macro TxtFrontend.use() --macro XmlFrontend.use() -main Main --interp`:
 	
-```
+```haxe
 class Main {
 	static function main() {
 		trace(HelloWorld.TEXT);
@@ -121,7 +121,7 @@ So now both frontends affect the same class. That was easy, right? You can use t
 
 Let's recall what a frontend is:
 	
-```
+```haxe
 interface FrontendPlugin {
 	function extensions():Iterator<String>;
 	function parse(file:String, context:FrontendContext):Void;
@@ -132,7 +132,7 @@ When the compiler cannot find a specific file, the syntax hub looks through all 
 
 Now to understand *how* a frontend would do its work, we need to know what `FrontendContext` is. A context represents an interface to building the module that was not found by the Haxe compiler. This is what it looks like:
 
-```
+```haxe
 class FrontendContext {
 
 	public var name(default, null):String;
@@ -160,7 +160,7 @@ The suggested way of implementing a frontend is to actually use a class level ma
 
 Under `tink.SyntaxHub.exprLevel` you will find an object defined like this:
 
-```
+```haxe
 class ExprLevelSyntax {
 	public var inward(default, null):Queue<ExprLevelRule>;	
 	public var outward(default, null):Queue<ExprLevelRule>;	
