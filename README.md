@@ -154,7 +154,7 @@ You register a `FrontendPlugin` on the `tink.SyntaxHub.frontends` priority queue
 
 ### Implement frontend as class level macro
 
-The suggested way of implementing a frontend is to actually use a class level macro.  %%%% EXPLAIN
+The suggested way of implementing a frontend is to actually by pushing down the heavy lifting to a class level macro. So instead of constructing the whole class in your `FrontendPlugin` it is wiser to generate an empty class with a `@:build` directive that then fills the class. This approach leads to more understandable error messages and also helps to reduce loops.
 
 ## Expression level syntax sugar
 
