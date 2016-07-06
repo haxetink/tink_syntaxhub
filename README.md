@@ -1,4 +1,5 @@
 # Tinkerbell Syntax Hub
+[![Gitter](https://img.shields.io/gitter/room/nwjs/nw.js.svg?maxAge=2592000)](https://gitter.im/haxetink/public)
 
 As you add more and more macros to a code base, they begin stepping onto each others feet. The issue in fact arose a lot in the development of `tink_lang` which for a long time had its own plugin in system to make it perform its magic in an orderly fashion. This plugin system has been extracted and expanded to `tink_syntaxhub` which provides a plugin architecture for 4 things:
 	
