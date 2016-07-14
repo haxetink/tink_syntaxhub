@@ -14,8 +14,8 @@
 	"contributors": [
 		"back2dos"
 	],
-	"releasenote": "Improve cache.",
-	"version": "0.3.5",
+	"releasenote": "Fix main class detection for -x.",
+	"version": "0.3.6",
 	"url": "http://haxetink.org/tink_syntaxhub",
 	"dependencies": {
 		"tink_priority": "",
