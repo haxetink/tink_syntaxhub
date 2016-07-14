@@ -19,10 +19,11 @@ class SyntaxHub {
     var args = Sys.args();
     
     MAIN =
-      switch args.indexOf('-main') {
-        case -1: null;
-        case v: args[v + 1];
+      switch [args.indexOf('-main'), args.indexOf('-x')] {
+        case [-1, -1]: null;
+        case [v, -1] | [_, v]: args[v+1];
       }
+      
     FrontendContext.resetCache();
     Context.onTypeNotFound(FrontendContext.findType);
     Compiler.addGlobalMetadata('', '@:build(tink.SyntaxHub.build())', true, true, false);
