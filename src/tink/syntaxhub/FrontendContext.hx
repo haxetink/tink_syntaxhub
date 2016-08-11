@@ -121,7 +121,7 @@ class FrontendContext {
 		if (!exists) {
 			var module = buildModule(pack, tname);
 			if (module.types.length == 0) {
-				cache.remove(name);
+				cache[name] = null;  // clean the entry, but not in a way we would try to build this again
 				return;
 			}
 
