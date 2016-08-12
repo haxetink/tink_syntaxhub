@@ -113,7 +113,7 @@ class FrontendContext {
     }
     var exists =
       try {
-        Context.getModule(actual);
+        Context.getType(actual);
         true;
       }
       catch (e:Dynamic) false;
