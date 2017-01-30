@@ -25,8 +25,10 @@ class SyntaxHub {
       }
       
     FrontendContext.resetCache();
+    classLevel.whenever(makeSyntax(exprLevel.appliedTo), exprLevel.id);//Apperently reinserting this every time is more reliable with the cache
     Context.onTypeNotFound(FrontendContext.findType);
     Compiler.addGlobalMetadata('', '@:build(tink.SyntaxHub.build())', true, true, false);
+
   }
   
   static function build():Array<Field>
@@ -100,9 +102,4 @@ class SyntaxHub {
         true;
       }
       else false;
-  
-  static var INITIALIZED = {
-    classLevel.whenever(makeSyntax(exprLevel.appliedTo), exprLevel.id);
-    true;
-  }
 }
