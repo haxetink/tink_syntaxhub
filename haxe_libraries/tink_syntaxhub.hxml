@@ -1,0 +1,4 @@
+-cp src
+-D tink_syntaxhub
+--macro tink.SyntaxHub.use()
+-lib tink_priority

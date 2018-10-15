@@ -1,0 +1,50 @@
+sudo: required
+dist: trusty
+
+stages:
+  - test
+  - deploy
+
+language: node_js
+node_js: 8
+
+cache:
+  directories:
+    - $HOME/haxe
+
+os:
+  - linux
+  # - osx
+
+env:
+  - HAXE_VERSION=3.4.7
+  - HAXE_VERSION=latest
+  
+  
+before_install:
+  - args=()
+  - if [ "$HAXE_VERSION" == "latest" ]; then args+=(-lib); args+=(hx3compat); fi
+  
+install:
+  - npm i -g lix
+  - lix install haxe $HAXE_VERSION
+  - lix download
+
+script:
+  - lix run travix interp "${args[@]}"
+
+  
+jobs:
+  include:
+    # - stage: test # should uncomment this when there is no matrix above (e.g. only one os, one env, etc)
+    - stage: deploy
+      os: linux
+      install:
+        - npm i -g lix
+        - lix download
+      script: skip
+      # env:
+      #   secure: 
+      after_success:
+        - lix run travix install
+        - lix run travix release
