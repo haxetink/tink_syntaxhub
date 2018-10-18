@@ -16,7 +16,7 @@
 	],
 	"releasenote": "Fix main class detection for -x.",
 	"version": "0.3.6",
-	"url": "http://haxetink.org/tink_syntaxhub",
+	"url": "https://github.com/haxetink/tink_syntaxhub",
 	"dependencies": {
 		"tink_priority": "",
 		"tink_macro": ""
