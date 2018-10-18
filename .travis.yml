@@ -17,8 +17,6 @@ os:
   # - osx
 
 env:
-  - secure: "Di3KzArM9fu2ITlD6hK3oSUfrBgZQIwIZ8ojmCxZULNyXh35pXb6aMWbjVgaM9dnvJt2IB8yXpehFSH+Q8pFJwF8MPu6DOjfSMJC6ug+rn36wYMY4kRPvE7+1uWAa/OAhfRnYxPUOTB5Wdyoe0LSX3nQBNxu3VNvdkm8cMT2FDs="
-
   - HAXE_VERSION=3.4.7
   - HAXE_VERSION=latest
   
@@ -45,8 +43,8 @@ jobs:
         - npm i -g lix
         - lix download
       script: skip
-      # env:
-      #   secure: 
+      env:
+        secure: Di3KzArM9fu2ITlD6hK3oSUfrBgZQIwIZ8ojmCxZULNyXh35pXb6aMWbjVgaM9dnvJt2IB8yXpehFSH+Q8pFJwF8MPu6DOjfSMJC6ug+rn36wYMY4kRPvE7+1uWAa/OAhfRnYxPUOTB5Wdyoe0LSX3nQBNxu3VNvdkm8cMT2FDs=
       after_success:
         - lix run travix install
         - lix run travix release
