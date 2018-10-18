@@ -15,7 +15,7 @@
 		"back2dos"
 	],
 	"releasenote": "Various updates",
-	"version": "0.4.1",
+	"version": "0.4.2",
 	"url": "https://github.com/haxetink/tink_syntaxhub",
 	"dependencies": {
 		"tink_priority": "",
