@@ -14,8 +14,8 @@
 	"contributors": [
 		"back2dos"
 	],
-	"releasenote": "Fix main class detection for -x.",
-	"version": "0.3.6",
+	"releasenote": "Various updates",
+	"version": "0.4.1",
 	"url": "https://github.com/haxetink/tink_syntaxhub",
 	"dependencies": {
 		"tink_priority": "",
