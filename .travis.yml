@@ -44,7 +44,8 @@ jobs:
         - lix download
       script: skip
       env:
-        secure: Di3KzArM9fu2ITlD6hK3oSUfrBgZQIwIZ8ojmCxZULNyXh35pXb6aMWbjVgaM9dnvJt2IB8yXpehFSH+Q8pFJwF8MPu6DOjfSMJC6ug+rn36wYMY4kRPvE7+1uWAa/OAhfRnYxPUOTB5Wdyoe0LSX3nQBNxu3VNvdkm8cMT2FDs=
+        - secure: "j3U6/DIvvuRRSls2Y4MOff7eEqVwjt9H6qdvvuPMvBshYB40mlAmkPzGxaVBZ1ia1DOqPmlCsHX3FwrQl+n4lAWPiyWzKaThK8Tb5TkOF1OJxHbbtzVz40ZTKBdOyowwEewxnFUO1eUs4NuOYHYTiZBPKA024oebm/1z7HJkx3k="
+
       after_success:
         - lix run travix install
         - lix run travix release
