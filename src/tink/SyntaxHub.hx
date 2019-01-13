@@ -15,6 +15,8 @@ using haxe.macro.Tools;
 class SyntaxHub {
   
   static var MAIN:Null<String> = null;
+  static var addedMeta = false;
+  
   static function use() {
     var args = Sys.args();
     
@@ -27,7 +29,11 @@ class SyntaxHub {
     FrontendContext.resetCache();
     classLevel.whenever(makeSyntax(exprLevel.appliedTo), exprLevel.id);//Apperently reinserting this every time is more reliable with the cache
     Context.onTypeNotFound(FrontendContext.findType);
-    Compiler.addGlobalMetadata('', '@:build(tink.SyntaxHub.build())', true, true, false);
+    
+    if(!addedMeta) {
+      addedMeta = true;
+      Compiler.addGlobalMetadata('', '@:build(tink.SyntaxHub.build())', true, true, false);
+    }
 
   }
   
