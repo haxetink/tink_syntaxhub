@@ -4,16 +4,20 @@ import tink.syntaxhub.*;
 import haxe.macro.Expr;
 import haxe.macro.Context;
 
-class XmlFrontend implements FrontendPlugin {
-  
+import haxe.ds.Option;
+
+class XmlFrontend implements TypeBuilder {
+
+  var file : String;
+  var text : String;
+
   public function new() {}
   
   public function extensions() 
     return ['xml'].iterator();
     
-  public function parse(file:String, context:FrontendContext):Void {
+  public function apply(context:FrontendContext):Void {
     
-    var text = sys.io.File.getContent(file);
     var pos = Context.makePosition({ file: file, min: 0, max: text.length });
     
     try
@@ -26,6 +30,15 @@ class XmlFrontend implements FrontendPlugin {
       access: [AStatic, APublic],
       kind: FProp('default', 'null', macro : Xml, macro Xml.parse($v{text})),
       pos: pos,
+    });
+  }
+  public function reader(){
+    return Some({
+      extensions  : function() return ['xml'].iterator(),
+      parse       : function(file:String):Void{
+        this.file = file;
+        this.text = sys.io.File.getContent(file);
+      }
     });
   }
   static function use()

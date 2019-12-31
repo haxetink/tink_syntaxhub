@@ -57,7 +57,7 @@ class SyntaxHub {
   static public var exprLevel(default, null) = new ExprLevelSyntax('tink.SyntaxHub::exprLevel');
   static public var transformMain(default, null) = new Queue<Expr->Expr>();  
   
-  static public var frontends(get, never):Queue<FrontendPlugin>;
+  static public var frontends(get, never):Queue<TypeBuilder>;
   
     static inline function get_frontends()
       return FrontendContext.plugins;

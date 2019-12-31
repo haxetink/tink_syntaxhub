@@ -8,6 +8,7 @@ import tink.core.Lazy;
 import tink.priority.Queue;
 
 using sys.FileSystem;
+using tink.core.Option;
 using tink.MacroApi;
 
 enum IncludeKind {
@@ -73,28 +74,46 @@ class FrontendContext {
       kind: KUsing(name.asTypePath())
     });
   
-  static public var plugins(default, null) = new Queue<FrontendPlugin>();
+  static public var plugins(default, null) = new Queue<TypeBuilder>();
   
   static function buildModule(pack:Array<String>, name:String) {
-    var ret = new FrontendContext(name, pack);
+    var ret     = new FrontendContext(name, pack);
+    var data    = plugins.getData();
+    if(data == null){
+      data = [];
+    }
     
     for (result in seekFile(pack, name, plugins.getData())) {
-      ret.addDependency(result.file);
-      result.plugin.parse(result.file, ret);
+      switch(result.file){
+        case Some(file) : 
+          ret.addDependency(file);
+          for(reader in result.plugin.reader()){
+            reader.parse(file);
+          }
+        default:
+      }
+      result.plugin.apply(ret);
     }
     
     return ret;
   }
-  static public function seekFile<T:FrontendPlugin>(pack:Array<String>, name:String, plugins:Iterable<T>) {
+  static public function seekFile<T:TypeBuilder>(pack:Array<String>, name:String, plugins:Iterable<T>) {
     var ret = [];
     for (cp in Context.getClassPath()) {
       var fileName = '$cp/${pack.join("/")}/$name';
-      for (p in plugins) 
-        for (ext in p.extensions()) {
-          var candidate = '$fileName.$ext';
-          if (candidate.exists()) 
-            ret.push({ file: candidate, plugin: p });
+      for (p in plugins){
+        var reader = p.reader();
+        switch(reader){
+          case Some(r) : 
+            for (ext in r.extensions()) {
+              var candidate = '$fileName.$ext';
+              if (candidate.exists()) 
+                ret.push({ file: Some(candidate), plugin: p });
+            }
+          case None : 
+            ret.push({file : None, plugin : p});
         }
+      }
     }
     return ret;
   }
