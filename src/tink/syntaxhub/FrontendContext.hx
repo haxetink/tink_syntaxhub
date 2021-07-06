@@ -88,13 +88,15 @@ class FrontendContext {
   static public function seekFile<T:FrontendPlugin>(pack:Array<String>, name:String, plugins:Iterable<T>) {
     var ret = [];
     for (cp in Context.getClassPath()) {
-      var fileName = '$cp/${pack.join("/")}/$name';
-      for (p in plugins) 
-        for (ext in p.extensions()) {
-          var candidate = '$fileName.$ext';
-          if (candidate.exists()) 
-            ret.push({ file: candidate, plugin: p });
-        }
+      var pack = pack.copy();
+      pack.unshift(cp);
+      pack.push(name);
+      var fileName = haxe.io.Path.join(pack);
+      for (ext in p.extensions()) {
+        var candidate = '$fileName.$ext';
+        if (candidate.exists()) 
+          ret.push({ file: candidate, plugin: p });
+      }
     }
     return ret;
   }
