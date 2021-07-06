@@ -19,43 +19,43 @@ class FrontendContext {
   var types:Array<TypeDefinition>;
   public var name(default, null):String;
   public var pack(default, null):Array<String>;
-  
+
   var dependencies:Array<String>;
   var includes:Array<{ kind: IncludeKind, pos:Position }>;
-  
+
   function new(name, pack) {
     types = [];
     dependencies = [];
     includes = [];
-    
+
     this.name = name;
     this.pack = pack;
   }
-  
+
   public function getType(?name:String, ?orCreate:Lazy<TypeDefinition>) {
     if (name == null)
       name = this.name;
-      
+
     for (t in types) {
       if (t.name == name) return t;
     }
-    
-    var ret = 
+
+    var ret =
       if (orCreate != null) orCreate.get();
       else macro class { };
-      
+
     ret.name = name;
     ret.pack = this.pack;
-    
+
     types.push(ret);
-    
+
     return ret;
   }
-  
+
   public function addDependency(file:String)
     this.dependencies.push(file);
-    
-  public function addImport(name:String, mode:ImportMode, pos:Position)     
+
+  public function addImport(name:String, mode:ImportMode, pos:Position)
     includes.push({
       pos: pos,
       kind: KImport({
@@ -66,23 +66,23 @@ class FrontendContext {
         }]
       })
     });
-  
-  public function addUsing(name:String, pos:Position) 
+
+  public function addUsing(name:String, pos:Position)
     includes.push( {
       pos: pos,
       kind: KUsing(name.asTypePath())
     });
-  
+
   static public var plugins(default, null) = new Queue<FrontendPlugin>();
-  
+
   static function buildModule(pack:Array<String>, name:String) {
     var ret = new FrontendContext(name, pack);
-    
+
     for (result in seekFile(pack, name, plugins.getData())) {
       ret.addDependency(result.file);
       result.plugin.parse(result.file, ret);
     }
-    
+
     return ret;
   }
   static public function seekFile<T:FrontendPlugin>(pack:Array<String>, name:String, plugins:Iterable<T>) {
@@ -92,11 +92,12 @@ class FrontendContext {
       pack.unshift(cp);
       pack.push(name);
       var fileName = haxe.io.Path.join(pack);
-      for (ext in p.extensions()) {
-        var candidate = '$fileName.$ext';
-        if (candidate.exists()) 
-          ret.push({ file: candidate, plugin: p });
-      }
+      for (p in plugins)
+        for (ext in p.extensions()) {
+          var candidate = '$fileName.$ext';
+          if (candidate.exists())
+            ret.push({ file: candidate, plugin: p });
+        }
     }
     return ret;
   }
@@ -137,7 +138,7 @@ class FrontendContext {
           case KUsing(u):
             var ct = TPath(u);
             (macro @:pos(d.pos) ([][0] : $ct)).typeof().sure();
-            usings.push(u);  
+            usings.push(u);
         }
 
       Context.defineModule(actual, module.types, imports, usings);
