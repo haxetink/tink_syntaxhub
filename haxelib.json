@@ -10,8 +10,8 @@
 	"contributors": [
 		"back2dos"
 	],
-	"version": "0.5.0",
-	"releasenote": "Various bugfixes.",
+	"version": "0.6.0",
+	"releasenote": "Get main class from tink_macro, thus supporting main transforms on eval from Haxe 4.3 onwards.",
 	"tags": [
 		"tink",
 		"cross",
