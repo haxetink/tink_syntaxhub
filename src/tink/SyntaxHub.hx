@@ -23,11 +23,7 @@ class SyntaxHub {
     }
     var args = Sys.args();
 
-    MAIN =
-      switch [args.indexOf('-main'), args.indexOf('-x')] {
-        case [-1, -1]: null;
-        case [v, -1] | [_, v]: args[v+1];
-      }
+    MAIN = tink.MacroApi.getMainClass().orNull();
 
     FrontendContext.resetCache();
     classLevel.whenever(makeSyntax(exprLevel.appliedTo), exprLevel.id);//Apperently reinserting this every time is more reliable with the cache
