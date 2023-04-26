@@ -103,10 +103,10 @@ class FrontendContext {
   }
 
   static function moduleForType(name:String) {
-    if (name.indexOf('__impl') != -1 || plugins.getData().length == 0) return;
+    if (name.indexOf('_impl') != -1 || plugins.getData().length == 0) return;
     var pack = name.split('.');
     var tname = pack.pop();
-    var actual = pack.concat(['__impl', tname]).join('.');
+    var actual = pack.concat(['_impl', tname]).join('.');
     cache[name] = {
       pack: pack,
       name: tname,
