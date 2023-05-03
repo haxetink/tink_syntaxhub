@@ -17,10 +17,9 @@ class SyntaxHub {
   static var MAIN:Null<String> = null;
   static var registered = false;
   static function use() {
-    if (registered) {
-      return;
-      registered = true;
-    }
+    if (registered) return;
+    registered = true;
+    
     var args = Sys.args();
 
     MAIN = tink.MacroApi.getMainClass().orNull();
