@@ -10,8 +10,8 @@
 	"contributors": [
 		"back2dos"
 	],
-	"version": "0.6.0",
-	"releasenote": "Get main class from tink_macro, thus supporting main transforms on eval from Haxe 4.3 onwards.",
+	"version": "0.6.1",
+	"releasenote": "Improve support for tink_await and for python.",
 	"tags": [
 		"tink",
 		"cross",
