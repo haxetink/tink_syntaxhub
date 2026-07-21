@@ -1,4 +1,5 @@
--cp src
--D tink_syntaxhub
---macro tink.SyntaxHub.use()
 -lib tink_priority
+-lib tink_macro
+-cp ${SCOPE_DIR}/./src
+-D tink_syntaxhub=0.6.1
+${SCOPE_DIR}/./extraParams.hxml

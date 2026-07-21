@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.haxe-version == 'nightly' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        haxe-version:
+          - stable
+          - nightly
+        target:
+          - interp
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v7
+
+      - name: Cache Haxe
+        uses: actions/cache@v6
+        with:
+          path: ${{ startsWith(runner.os, 'windows') && '%AppData%' || '~/haxe' }}
+          key: ${{ runner.os }}-haxe
+
+      - name: Install Lix
+        uses: lix-pm/setup-lix@master
+
+      - name: Install Haxe
+        run: lix install haxe ${{ matrix.haxe-version }}
+
+      - name: Install Haxe Libraries
+        run: lix download
+
+      - name: Run Test
+        run: lix run travix ${{ matrix.target }}
