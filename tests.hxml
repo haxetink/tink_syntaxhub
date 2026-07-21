@@ -3,8 +3,16 @@
 -lib tink_macro
 -cp src
 -cp tests
+
+--each
 -main Main
-extraParams.hxml
--dce full
 --macro TxtFrontend.use()
 --macro XmlFrontend.use()
+
+--next
+-main main.ClassMain
+--macro main.InjectToMain.inject()
+
+--next
+-main main.ModuleMain
+--macro main.InjectToMain.inject()

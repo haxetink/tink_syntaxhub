@@ -3,9 +3,7 @@ package tink;
 import haxe.macro.*;
 import haxe.macro.Expr;
 import haxe.ds.Option;
-
 import tink.macro.ClassBuilder;
-
 import tink.priority.Queue;
 import tink.syntaxhub.*;
 
@@ -13,16 +11,26 @@ using tink.CoreApi;
 using haxe.macro.Tools;
 
 class SyntaxHub {
-
+  static var MODULE_MAIN:Null<String> = null;
   static var MAIN:Null<String> = null;
   static var registered = false;
+  static var mainTransformed = false;
+
   static function use() {
     if (registered) return;
     registered = true;
-    
+
     var args = Sys.args();
 
-    MAIN = tink.MacroApi.getMainClass().orNull();
+    // TODO: maybe we want to update this in tink_macro
+    switch tink.MacroApi.getMainClass() {
+      case Some(main):
+        MAIN = main;
+        final pack = main.split('.');
+        final name = pack.pop();
+        MODULE_MAIN = pack.concat(['_${name}', '${name}_Fields_']).join('.');
+      case None:
+    }
 
     FrontendContext.resetCache();
     classLevel.whenever(makeSyntax(exprLevel.appliedTo), exprLevel.id);//Apperently reinserting this every time is more reliable with the cache
@@ -87,19 +95,28 @@ class SyntaxHub {
           false;
       }
 
-  static function applyMainTransform(c:ClassBuilder)
-    return
-      if (c.target.pack.concat([c.target.name]).join('.') == MAIN) {
-        var main = c.memberByName('main').sure();
-        var f = main.getFunction().sure();
+  static function applyMainTransform(c:ClassBuilder) {
+    if (mainTransformed) return false;
 
-        if (f.expr == null)
-          f.expr = macro @:pos(main.pos) { };
+    final name = c.target.pack.concat([c.target.name]).join('.');
 
-        for (rule in transformMain)
-          f.expr = rule(f.expr);
-
-        true;
+    function getMainFunction() {
+      return if (name == MAIN || name == MODULE_MAIN) {
+        c.memberByName('main').flatMap(f -> f.getFunction().map(fn -> {field: f, fn: fn}));
+      } else {
+        Failure(new Error('Main function not found'));
       }
-      else false;
+    }
+
+    switch getMainFunction() {
+      case Success({field: main, fn: f}):
+        if (f.expr == null)
+          f.expr = macro @:pos(main.pos) {};
+        for(rule in transformMain)
+          f.expr = rule(f.expr);
+        return mainTransformed = true;
+      case Failure(_):
+        return false;
+    }
+  }
 }
