@@ -1,9 +1,0 @@
--lib tink_syntaxhub
--cp tests
--js bin/tinksyntaxhub.js
--D analyzer
--main Main
-extraParams.hxml
--dce full
---macro TxtFrontend.use()
---macro XmlFrontend.use()
